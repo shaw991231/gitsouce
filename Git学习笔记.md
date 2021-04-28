@@ -1,6 +1,6 @@
 ## Git
 
->写在前面，由于之前学git的时候没学清楚，平时没怎么用，在某一次博客源码未进行备份的时候丢失了最新版本，因此有了这篇文章，这不是入门教程，只是自己重新回顾的时候记录的文章。
+>写在前面，由于之前经历丢失源码的惨痛经历，因此有了这篇文章，这不是入门教程，只是学习笔记。入门推荐看廖雪峰老师的教程：https://www.liaoxuefeng.com/wiki/896043488029600
 
 [toc]
 
@@ -132,111 +132,234 @@ user.email=shaw@exmple.com
 
 ##### 用户配置
 
-    ```bash
-    $ git config --global user.name "Your Name"
-    $ git config --global user.email "email@exmple.com"
-    ```
+```bash
+$ git config --global user.name "Your Name"
+$ git config --global user.email "email@exmple.com"
+```
+
 因为Git是分布式版本控制系统，所以，每个机器都必须自报家门：你的名字和Email地址。
+
 ##### 创建仓库
-    ```bash
-    $ git init <directory>
-    ```
+
+```bash
+$ git init <directory>
+```
+
 创建版本库，可以理解为一个目录，这个目录所有文件都被Git管理，包括修改、删除都能追踪，也可以将历史“还原”。
+
 ##### 常用命令
 - 添加
 
-        ```bash
-        $ git add <file>
-        ```
-    从工作区添加文件到暂存区
+    ```bash
+    $ git add <file>  #  从工作区添加文件到暂存区
+    ```
+   
 - 提交
 
-        ```bash
-        $ git commit -m "message"
-        ```
-     从暂存区提交文件到版本库
+    ```bash
+    $ git commit -m "message"  # 从暂存区提交文件到版本库
+    ```
+     
 - 状态
 
-        ```bash
-        $ git status
-        $ git log
-        $ git reflog
-        ```
-    `git status`显示哪些文件已被staged、未被staged以及未追踪(untracked)
-    `git log`显示commit历史
-    `git reflog`显示本地repo的所有commit日志
+    ```bash
+    $ git status  # 显示哪些文件已被staged、未被staged以及未追踪(untracked)
+    $ git log  # 显示commit历史
+    $ git reflog  # 显示本地repo的所有commit日志
+    ```
+
 - 对比 
         
-        ```bash
-        $ git diff <file>
-        $ git diff HEAD
-        $ git diff --cached
-        $ git diff HEAD --<file>
-        ```
-    `git diff <file>` 比较工作区和暂存区文件的修改
-    `git diff HEAD`比较工作区和上一次commit后的修改
-    `git diff --cached`比较暂存区和上一次commit后的修改
-    `git diff HEAD --<file>`比较工作区和上一次commit后的文件的修改
+    ```bash
+    $ git diff <file>  # 比较工作区和暂存区文件的修改
+    $ git diff HEAD  # 比较工作区和上一次commit后的修改
+    $ git diff --cached  # 比较暂存区和上一次commit后的修改
+    $ git diff HEAD --<file>  # 比较工作区和上一次commit后的文件的修改
+     ```
+
 - 撤销(回退)
         
-        ```bash
-        $ git reset HEAD^
-        $ git checkout -- <file>
-        $ git rest HEAD <file>
-        ```
-    `git reset HEAD^`版本回退，`HEAD^`是前一个版本，再前一个则`HEAD^^`
-    `git checkout -- <file>`工作区修改撤销
-    `git rest HEAD <file>`暂存区修改撤销
+    ```bash
+    $ git reset HEAD^  # 版本回退
+    $ git checkout -- <file>  # 工作区修改撤销
+    $ git rest HEAD <file>  # 暂存区修改撤销
+    ```
+    
+    `HEAD^`是前一个版本，再前一个则`HEAD^^`
+    
 - 版本库删除与移动
         
-        ```bash
-        $ git rm <file>
-        $ git mv <file>
-        ```
-    这个就不说明了。
+    ```bash
+    $ git rm <file>
+    $ git mv <file>
+    ```
 
 ##### 分支管理
 
 - 创建分支并切换
     
     ```bash
-
+    $ git switch -c <branch>
+    $ git checkout -b <branch>
     ```
 
 - 查看分支
     
     ```bash
-    
+    $ git branch  # 查看所有分支
     ```
 
 - 切换分支
    
    ```bash
-    
+    $ git checkout <branch>
+    $ git switch <branch>
     ```
 
 - 合并某分支到当前分支
     
     ```bash
-    
+    $ git merge <branch>
+    $ git merge --no-ff -m "message" <branch> # `--no-ff `这个参数是禁用Fast forward模式进行合并，会在merge时生成一个新的commit，在分支历史上留下信息，方便以后查看
     ```
+
+    在合并分支有时会遇到合并冲突，可以进行以下步骤：
+    1.解决冲突，把git合并失败的文件手动编辑为最后确定的内容。
+    1. 再进行提交，合并完成。
+    2. `git log --graph`查看分支合并图
 
 - 删除分支
     
     ```bash
-    
+    $ git branch -d <branch>
+    $ git branch -D <branch>  #将未合并的分支强制删除
     ```
 
 - 处理bug
     
     ```bash
-    
+    $ git stash  #将当前工作环境暂时“存储”起来，等修复bug后再恢复
+    $ git stash list  #查看“存储”的工作环境
+    $ git stash apply  #将工作环境回复，但不删除工作环境
+    $ git stash drop  #删除工作环境
+    $ git stash pop  #恢复工作环境的同时并删除
+    $ git cherry-pick <commit> #将指定的commit应用于其他分支
     ```
 
 #### 远程仓库
 
+##### 查看远程仓库
+
+```bash
+$ git remote
+$ git remote -v  # 更详细的信息
+```
+
+##### 克隆远程仓库
+
+```bash
+$ git clone git@server-name:path/repo-name.git
+```
+
+##### 添加远程仓库
+
+```bash
+$ git remote add origin git@server-name:path/repo-name.git
+```
+
+##### 本地建立与远程分支对应的分支
+
+```bash
+$ git checkout -b <branch> origin/branch
+```
+
+##### 建立本地分支和远程分支的关联
+
+```bash
+$ git branch --set-upstream <branch> origin/branch
+```
+
+##### 推送分支
+
+```bash
+$ git push -u origin master  # 第一次推送，加-u参数，本地与远程的master分支关联起来，origin是习惯命名
+$ git push origin <branch>
+```
+
+##### 提取远程仓库
+
+```bash
+$ git fetch origin/branch
+$ git merge origin/branch
+```
+##### 抓取分支
+
+```bash
+$ git pull <remote> <banch>
+```
+##### 整理提交（commit）历史
+
+```bash
+$ git rebase  # 可以将本地未push的分叉提交历史整理成直线
+```
+
+
 
 #### 标签管理
 
+##### 创建标签
+
+```bash
+$ git tag <tag>
+$ git tag -a <tag> -m "message" <commit>
+```
+
+##### 查看标签
+
+```bash
+$ git tag
+```
+
+##### 删除标签
+
+```bash
+$ git tag -d <tag>
+$ git push origin :refs/tags/<tag>  # 删除远程标签：先删除本地再删除远程
+```
+
+##### 推送本地标签到远程
+
+```bash
+$ git push origin <tag>
+$ git push origin --tags  # 一次性推送全部未推送到远程的本地标签
+```
 
 #### 自定义
+
+##### 忽略特殊文件
+
+###### 配置.gitignore文件
+
+配置文件的原则为：
+1. 忽略系统自动生成的文件、如缩略图等
+2. 忽略编译生成的中间文件、执行文件等，如Java编译产生的`.class`文件
+3. 忽略你自己带有敏感信息的配置文件，如存放口令的配置文件
+
+###### GitHub准备的各种配置文件
+
+如果生成的无用文件过多，我们不必自己一个一个写需要忽略的文件，在GitHub上有准备好的各种配置文件：https://github.com/github/gitignore
+
+```bash
+$ git add -f <file>  # 强制添加被.gitignore忽略的文件
+$ git check-ignore -v <file>  #  检查.ignore规则
+```
+
+##### 配置别名
+
+```bash
+$ git config --global alias.st status  # 将status配置为st，git st 相当于 git status
+```
+
+配置文件存放在`./git/config`内
+
+##### 搭建Git服务器
