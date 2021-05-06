@@ -363,3 +363,36 @@ $ git config --global alias.st status  # 将status配置为st，git st 相当于
 配置文件存放在`./git/config`内
 
 ##### 搭建Git服务器
+
+首先要有一台Linux的机器，而且有`sudo`权限的账号。
+首先，安装`git`:
+
+```bash
+$ sudo apt-get install git
+$ sudo adduser git  # 创建git用户，来运行git服务
+```
+然后收集证书，将需要登录的用户的公钥，就是`id_rsa.pua`文件，把所有公钥导入到`/home/git/.ssh/authorized_keys`文件内，一行一个。
+初始化Git仓库，选定一个目录下，如：`/var/demo.git`，在`/var`目录下输入：
+
+```bash
+$ sudo git init --bare demo.git
+```
+
+此时，这个目录下就是一个空仓库，没有工作区，因为服务器上的Git仓库纯粹是为了共享，所以不让用户直接登录到服务器上去改工作区，并且服务器上的Git仓库通常都以`.git`结尾。然后，把owner改为`git`：
+
+```bash
+$ sudo chown -R git:git demo.git
+```
+最后，克隆远程仓库：
+
+```bash
+$ git clone git@server:/var/demo.git
+Cloning into 'demo'...
+warning: You appear to have cloned an empty repository.
+```
+
+---
+
+参考：
+https://www.runoob.com/git/git-tutorial.html
+https://www.liaoxuefeng.com/wiki/896043488029600
